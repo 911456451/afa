@@ -9,7 +9,7 @@
 #SBATCH -t 3-0:00:00
 #SBATCH -o wetr_attn_reg.out
 
-source activate py36
+source activate afa
 
 port=29501
 crop_size=512
@@ -18,5 +18,5 @@ file=scripts/dist_train_voc.py
 config=configs/voc_attn_reg.yaml
 
 echo python -m torch.distributed.launch --nproc_per_node=2 --master_port=$port $file --config $config --pooling gmp --crop_size $crop_size --work_dir work_dir_final
-python -m torch.distributed.launch --nproc_per_node=2 --master_port=$port $file --config $config --pooling gmp --crop_size $crop_size --work_dir work_dir_final
+CUDA_VISIBLE_DEVICES=4,5,6 python -m torch.distributed.launch --nproc_per_node=2 --master_port=$port $file --config $config --pooling gmp --crop_size $crop_size --work_dir work_dir_final
 

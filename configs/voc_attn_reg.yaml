@@ -4,7 +4,7 @@ backbone:
   comments: None
 
 dataset:
-  root_dir: ../VOCdevkit/VOC2012
+  root_dir: VOC2012
   name_list_dir: datasets/voc
   num_classes: 21
   crop_size: 320

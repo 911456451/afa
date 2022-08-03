@@ -1,0 +1,453 @@
+2022-07-26 16:41:40,944 - dist_train_voc.py - INFO: 
+args: Namespace(backend='nccl', config='configs/voc_attn_reg.yaml', crop_size=512, high_thre=0.55, local_rank=0, low_thre=0.35, pooling='gmp', radius=8, seg_detach=False, work_dir='work_dir_final')
+2022-07-26 16:41:40,944 - dist_train_voc.py - INFO: 
+configs: {'backbone': {'config': 'mit_b1', 'stride': [4, 2, 2, 1], 'comments': 'None'}, 'dataset': {'root_dir': 'VOC2012', 'name_list_dir': 'datasets/voc', 'num_classes': 21, 'crop_size': 512, 'resize_range': [512, 2048], 'rescale_range': [0.5, 2.0], 'ignore_index': 255}, 'work_dir': {'dir': 'work_dir_final', 'ckpt_dir': 'work_dir_final/checkpoints/2022-07-26-16-41', 'pred_dir': 'work_dir_final/predictions', 'segs_dir': 'segs', 'tb_logger_dir': 'work_dir_final/tb_logger/2022-07-26-16-41'}, 'train': {'split': 'train_aug', 'samples_per_gpu': 2, 'max_iters': 20000, 'cam_iters': 2000, 'eval_iters': 2000, 'log_iters': 200}, 'cam': {'bkg_score': 0.45, 'high_thre': 0.55, 'low_thre': 0.35, 'aff_thre': 0.4, 'scales': [1, 0.5, 1.5]}, 'val': {'split': 'val'}, 'optimizer': {'type': 'AdamW', 'learning_rate': 6e-05, 'betas': [0.9, 0.999], 'weight_decay': 0.01}, 'scheduler': {'warmup_iter': 1500, 'warmup_ratio': 1e-06, 'power': 1.0}}
+2022-07-26 16:42:09,168 - dist_train_voc.py - INFO: 
+Network config: 
+WeTr(
+  (encoder): mit_b1(
+    (patch_embed1): OverlapPatchEmbed(
+      (proj): Conv2d(3, 64, kernel_size=(7, 7), stride=(4, 4), padding=(3, 3))
+      (norm): LayerNorm((64,), eps=1e-05, elementwise_affine=True)
+    )
+    (patch_embed2): OverlapPatchEmbed(
+      (proj): Conv2d(64, 128, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+      (norm): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
+    )
+    (patch_embed3): OverlapPatchEmbed(
+      (proj): Conv2d(128, 320, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
+      (norm): LayerNorm((320,), eps=1e-05, elementwise_affine=True)
+    )
+    (patch_embed4): OverlapPatchEmbed(
+      (proj): Conv2d(320, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+    )
+    (block1): ModuleList(
+      (0): Block(
+        (norm1): LayerNorm((64,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (q): Linear(in_features=64, out_features=64, bias=True)
+          (kv): Linear(in_features=64, out_features=128, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=64, out_features=64, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+          (sr): Conv2d(64, 64, kernel_size=(8, 8), stride=(8, 8))
+          (norm): LayerNorm((64,), eps=1e-05, elementwise_affine=True)
+        )
+        (drop_path): Identity()
+        (norm2): LayerNorm((64,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=64, out_features=256, bias=True)
+          (dwconv): DWConv(
+            (dwconv): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=256)
+          )
+          (act): GELU()
+          (fc2): Linear(in_features=256, out_features=64, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (1): Block(
+        (norm1): LayerNorm((64,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (q): Linear(in_features=64, out_features=64, bias=True)
+          (kv): Linear(in_features=64, out_features=128, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=64, out_features=64, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+          (sr): Conv2d(64, 64, kernel_size=(8, 8), stride=(8, 8))
+          (norm): LayerNorm((64,), eps=1e-05, elementwise_affine=True)
+        )
+        (drop_path): DropPath()
+        (norm2): LayerNorm((64,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=64, out_features=256, bias=True)
+          (dwconv): DWConv(
+            (dwconv): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=256)
+          )
+          (act): GELU()
+          (fc2): Linear(in_features=256, out_features=64, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+    )
+    (norm1): LayerNorm((64,), eps=1e-06, elementwise_affine=True)
+    (block2): ModuleList(
+      (0): Block(
+        (norm1): LayerNorm((128,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (q): Linear(in_features=128, out_features=128, bias=True)
+          (kv): Linear(in_features=128, out_features=256, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=128, out_features=128, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+          (sr): Conv2d(128, 128, kernel_size=(4, 4), stride=(4, 4))
+          (norm): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
+        )
+        (drop_path): DropPath()
+        (norm2): LayerNorm((128,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=128, out_features=512, bias=True)
+          (dwconv): DWConv(
+            (dwconv): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=512)
+          )
+          (act): GELU()
+          (fc2): Linear(in_features=512, out_features=128, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (1): Block(
+        (norm1): LayerNorm((128,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (q): Linear(in_features=128, out_features=128, bias=True)
+          (kv): Linear(in_features=128, out_features=256, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=128, out_features=128, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+          (sr): Conv2d(128, 128, kernel_size=(4, 4), stride=(4, 4))
+          (norm): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
+        )
+        (drop_path): DropPath()
+        (norm2): LayerNorm((128,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=128, out_features=512, bias=True)
+          (dwconv): DWConv(
+            (dwconv): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=512)
+          )
+          (act): GELU()
+          (fc2): Linear(in_features=512, out_features=128, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+    )
+    (norm2): LayerNorm((128,), eps=1e-06, elementwise_affine=True)
+    (block3): ModuleList(
+      (0): Block(
+        (norm1): LayerNorm((320,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (q): Linear(in_features=320, out_features=320, bias=True)
+          (kv): Linear(in_features=320, out_features=640, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=320, out_features=320, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+          (sr): Conv2d(320, 320, kernel_size=(2, 2), stride=(2, 2))
+          (norm): LayerNorm((320,), eps=1e-05, elementwise_affine=True)
+        )
+        (drop_path): DropPath()
+        (norm2): LayerNorm((320,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=320, out_features=1280, bias=True)
+          (dwconv): DWConv(
+            (dwconv): Conv2d(1280, 1280, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=1280)
+          )
+          (act): GELU()
+          (fc2): Linear(in_features=1280, out_features=320, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (1): Block(
+        (norm1): LayerNorm((320,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (q): Linear(in_features=320, out_features=320, bias=True)
+          (kv): Linear(in_features=320, out_features=640, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=320, out_features=320, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+          (sr): Conv2d(320, 320, kernel_size=(2, 2), stride=(2, 2))
+          (norm): LayerNorm((320,), eps=1e-05, elementwise_affine=True)
+        )
+        (drop_path): DropPath()
+        (norm2): LayerNorm((320,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=320, out_features=1280, bias=True)
+          (dwconv): DWConv(
+            (dwconv): Conv2d(1280, 1280, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=1280)
+          )
+          (act): GELU()
+          (fc2): Linear(in_features=1280, out_features=320, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+    )
+    (norm3): LayerNorm((320,), eps=1e-06, elementwise_affine=True)
+    (block4): ModuleList(
+      (0): Block(
+        (norm1): LayerNorm((512,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (q): Linear(in_features=512, out_features=512, bias=True)
+          (kv): Linear(in_features=512, out_features=1024, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=512, out_features=512, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath()
+        (norm2): LayerNorm((512,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=512, out_features=2048, bias=True)
+          (dwconv): DWConv(
+            (dwconv): Conv2d(2048, 2048, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=2048)
+          )
+          (act): GELU()
+          (fc2): Linear(in_features=2048, out_features=512, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (1): Block(
+        (norm1): LayerNorm((512,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (q): Linear(in_features=512, out_features=512, bias=True)
+          (kv): Linear(in_features=512, out_features=1024, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=512, out_features=512, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath()
+        (norm2): LayerNorm((512,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=512, out_features=2048, bias=True)
+          (dwconv): DWConv(
+            (dwconv): Conv2d(2048, 2048, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=2048)
+          )
+          (act): GELU()
+          (fc2): Linear(in_features=2048, out_features=512, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+    )
+    (norm4): LayerNorm((512,), eps=1e-06, elementwise_affine=True)
+  )
+  (dropout): Dropout2d(p=0.5, inplace=False)
+  (decoder): SegFormerHead(
+    (linear_c4): MLP(
+      (proj): Linear(in_features=512, out_features=256, bias=True)
+    )
+    (linear_c3): MLP(
+      (proj): Linear(in_features=320, out_features=256, bias=True)
+    )
+    (linear_c2): MLP(
+      (proj): Linear(in_features=128, out_features=256, bias=True)
+    )
+    (linear_c1): MLP(
+      (proj): Linear(in_features=64, out_features=256, bias=True)
+    )
+    (dropout): Dropout2d(p=0.1, inplace=False)
+    (linear_fuse): ConvModule(
+      (conv): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn): SyncBatchNorm(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (activate): ReLU(inplace=True)
+    )
+    (linear_pred): Conv2d(256, 21, kernel_size=(1, 1), stride=(1, 1))
+  )
+  (attn_proj): Conv2d(16, 1, kernel_size=(1, 1), stride=(1, 1))
+  (classifier): Conv2d(512, 20, kernel_size=(1, 1), stride=(1, 1), bias=False)
+)
+2022-07-26 16:42:09,535 - dist_train_voc.py - INFO: 
+Optimizer: 
+PolyWarmupAdamW (
+Parameter Group 0
+    amsgrad: False
+    betas: [0.9, 0.999]
+    eps: 1e-08
+    lr: 6e-05
+    weight_decay: 0.01
+
+Parameter Group 1
+    amsgrad: False
+    betas: [0.9, 0.999]
+    eps: 1e-08
+    lr: 0.0
+    weight_decay: 0.0
+
+Parameter Group 2
+    amsgrad: False
+    betas: [0.9, 0.999]
+    eps: 1e-08
+    lr: 0.0006000000000000001
+    weight_decay: 0.01
+
+Parameter Group 3
+    amsgrad: False
+    betas: [0.9, 0.999]
+    eps: 1e-08
+    lr: 0.0006000000000000001
+    weight_decay: 0.01
+)
+2022-07-26 16:45:09,801 - dist_train_voc.py - INFO: Iter: 200; Elasped: 0:03:00; ETA: 4:57:00; LR: 7.960e-06; cls_loss: 0.5607, aff_loss: 0.5124, pseudo_seg_loss 3.1018, pseudo_seg_mAcc: 0.0288
+2022-07-26 16:48:17,575 - dist_train_voc.py - INFO: Iter: 400; Elasped: 0:06:08; ETA: 5:00:32; LR: 1.596e-05; cls_loss: 0.2387, aff_loss: 0.5085, pseudo_seg_loss 3.0828, pseudo_seg_mAcc: 0.0473
+2022-07-26 16:51:28,197 - dist_train_voc.py - INFO: Iter: 600; Elasped: 0:09:19; ETA: 5:01:14; LR: 2.396e-05; cls_loss: 0.2008, aff_loss: 0.5079, pseudo_seg_loss 3.1007, pseudo_seg_mAcc: 0.0200
+2022-07-26 16:54:34,616 - dist_train_voc.py - INFO: Iter: 800; Elasped: 0:12:25; ETA: 4:58:00; LR: 3.196e-05; cls_loss: 0.1529, aff_loss: 0.5098, pseudo_seg_loss 3.0798, pseudo_seg_mAcc: 0.0156
+2022-07-26 16:57:42,784 - dist_train_voc.py - INFO: Iter: 1000; Elasped: 0:15:33; ETA: 4:55:27; LR: 3.996e-05; cls_loss: 0.1382, aff_loss: 0.5078, pseudo_seg_loss 3.1323, pseudo_seg_mAcc: 0.0323
+2022-07-26 17:00:52,391 - dist_train_voc.py - INFO: Iter: 1200; Elasped: 0:18:43; ETA: 4:53:13; LR: 4.796e-05; cls_loss: 0.1373, aff_loss: 0.5010, pseudo_seg_loss 3.1060, pseudo_seg_mAcc: 0.0508
+2022-07-26 17:04:02,251 - dist_train_voc.py - INFO: Iter: 1400; Elasped: 0:21:53; ETA: 4:50:44; LR: 5.596e-05; cls_loss: 0.1230, aff_loss: 0.4912, pseudo_seg_loss 3.1297, pseudo_seg_mAcc: 0.0017
+2022-07-26 17:07:08,221 - dist_train_voc.py - INFO: Iter: 1600; Elasped: 0:24:59; ETA: 4:47:18; LR: 5.520e-05; cls_loss: 0.1137, aff_loss: 0.4965, pseudo_seg_loss 3.1320, pseudo_seg_mAcc: 0.0075
+2022-07-26 17:10:16,582 - dist_train_voc.py - INFO: Iter: 1800; Elasped: 0:28:07; ETA: 4:44:17; LR: 5.460e-05; cls_loss: 0.1023, aff_loss: 0.4979, pseudo_seg_loss 3.1336, pseudo_seg_mAcc: 0.0053
+2022-07-26 17:13:27,241 - dist_train_voc.py - INFO: Iter: 2000; Elasped: 0:31:18; ETA: 4:41:42; LR: 5.400e-05; cls_loss: 0.1080, aff_loss: 0.4862, pseudo_seg_loss 3.1275, pseudo_seg_mAcc: 0.0115
+2022-07-26 17:13:38,419 - dist_train_voc.py - INFO: Validating...
+2022-07-26 17:17:49,797 - dist_train_voc.py - INFO: val cls score: 0.797915
+2022-07-26 17:17:49,797 - dist_train_voc.py - INFO: cams score:
+2022-07-26 17:17:49,798 - dist_train_voc.py - INFO: {'pAcc': 0.8039582091577908, 'mAcc': 0.6795703869711999, 'miou': 0.4645887396064505, 'iou': {0: 0.7735545981468185, 1: 0.49594236936001085, 2: 0.2859595202570608, 3: 0.4016948666727905, 4: 0.33052670097738324, 5: 0.33780427658094847, 6: 0.5667171503400753, 7: 0.5479054673290826, 8: 0.6409765183570938, 9: 0.181379286350886, 10: 0.5524750550255788, 11: 0.3155401323213626, 12: 0.5402994517582274, 13: 0.5414213417991401, 14: 0.5870421715635483, 15: 0.4841052301593817, 16: 0.40243183269585664, 17: 0.5782482526716145, 18: 0.35862739081919154, 19: 0.5337626364391281, 20: 0.2999492821102785}}
+2022-07-26 17:17:49,798 - dist_train_voc.py - INFO: aff cams score:
+2022-07-26 17:17:49,798 - dist_train_voc.py - INFO: {'pAcc': 0.6579947040604143, 'mAcc': 0.563633879345329, 'miou': 0.2904092587856839, 'iou': {0: 0.6098929695902037, 1: 0.27346104666718096, 2: 0.10766567168657669, 3: 0.26481400106387226, 4: 0.2863452535936326, 5: 0.08941519980778614, 6: 0.4794633373276666, 7: 0.4051834216465605, 8: 0.46105411433491705, 9: 0.12395241732206529, 10: 0.3419451275947576, 11: 0.09233394398589617, 12: 0.46605761763323733, 13: 0.30116918024745426, 14: 0.3381035458317616, 15: 0.32037302395572603, 16: 0.16552411789642596, 17: 0.296948779669958, 18: 0.08974088658984383, 19: 0.39423542817107615, 20: 0.1909153498827624}}
+2022-07-26 17:17:49,798 - dist_train_voc.py - INFO: segs score:
+2022-07-26 17:17:49,798 - dist_train_voc.py - INFO: {'pAcc': 0.043842720395566186, 'mAcc': 0.03287449146216533, 'miou': 0.007980048817071641, 'iou': {0: 0.04852930931156338, 1: 0.0003443323399518868, 2: 0.003586855819115811, 3: 0.014961769135375697, 4: 0.0007776514190808905, 5: 0.00020982747835107663, 6: 0.0022660616084119035, 7: 1.975065440074078e-05, 8: 0.002570560068932195, 9: 0.006326982132530473, 10: 0.00903521180108397, 11: 9.48075673030032e-05, 12: 0.0018404191005638832, 13: 0.0016299705190846326, 14: 0.05177579170616077, 15: 0.0012950487731462894, 16: 0.007481744473255118, 17: 0.00054621129912985, 18: 0.009821509263817954, 19: 0.0018176178264647704, 20: 0.0026495928607801413}}
+2022-07-26 17:20:46,724 - dist_train_voc.py - INFO: Iter: 2200; Elasped: 0:38:37; ETA: 5:12:26; LR: 5.340e-05; cls_loss: 0.0940, aff_loss: 0.4879, pseudo_seg_loss 0.7277, pseudo_seg_mAcc: 0.7415
+2022-07-26 17:23:54,341 - dist_train_voc.py - INFO: Iter: 2400; Elasped: 0:41:45; ETA: 5:06:10; LR: 5.280e-05; cls_loss: 0.1015, aff_loss: 0.4869, pseudo_seg_loss 0.4617, pseudo_seg_mAcc: 0.2112
+2022-07-26 17:26:58,618 - dist_train_voc.py - INFO: Iter: 2600; Elasped: 0:44:49; ETA: 4:59:55; LR: 5.220e-05; cls_loss: 0.0941, aff_loss: 0.4696, pseudo_seg_loss 0.4141, pseudo_seg_mAcc: 0.7260
+2022-07-26 17:30:06,687 - dist_train_voc.py - INFO: Iter: 2800; Elasped: 0:47:57; ETA: 4:54:33; LR: 5.160e-05; cls_loss: 0.0939, aff_loss: 0.3990, pseudo_seg_loss 0.3805, pseudo_seg_mAcc: 0.8396
+2022-07-26 17:33:15,017 - dist_train_voc.py - INFO: Iter: 3000; Elasped: 0:51:06; ETA: 4:49:34; LR: 5.100e-05; cls_loss: 0.0943, aff_loss: 0.1819, pseudo_seg_loss 0.4306, pseudo_seg_mAcc: 0.4866
+2022-07-26 17:36:20,760 - dist_train_voc.py - INFO: Iter: 3200; Elasped: 0:54:11; ETA: 4:44:27; LR: 5.040e-05; cls_loss: 0.0871, aff_loss: 0.1560, pseudo_seg_loss 0.3810, pseudo_seg_mAcc: 0.2815
+2022-07-26 17:39:26,033 - dist_train_voc.py - INFO: Iter: 3400; Elasped: 0:57:17; ETA: 4:39:40; LR: 4.980e-05; cls_loss: 0.0827, aff_loss: 0.1481, pseudo_seg_loss 0.3162, pseudo_seg_mAcc: 0.7329
+2022-07-26 17:42:33,683 - dist_train_voc.py - INFO: Iter: 3600; Elasped: 1:00:24; ETA: 4:35:09; LR: 4.920e-05; cls_loss: 0.0883, aff_loss: 0.1432, pseudo_seg_loss 0.3653, pseudo_seg_mAcc: 0.5208
+2022-07-26 17:45:39,907 - dist_train_voc.py - INFO: Iter: 3800; Elasped: 1:03:30; ETA: 4:30:42; LR: 4.860e-05; cls_loss: 0.0918, aff_loss: 0.1340, pseudo_seg_loss 0.3752, pseudo_seg_mAcc: 0.1674
+2022-07-26 17:48:43,018 - dist_train_voc.py - INFO: Iter: 4000; Elasped: 1:06:33; ETA: 4:26:12; LR: 4.800e-05; cls_loss: 0.0809, aff_loss: 0.1356, pseudo_seg_loss 0.3136, pseudo_seg_mAcc: 0.3871
+2022-07-26 17:48:49,779 - dist_train_voc.py - INFO: Validating...
+2022-07-26 17:53:04,934 - dist_train_voc.py - INFO: val cls score: 0.865273
+2022-07-26 17:53:04,935 - dist_train_voc.py - INFO: cams score:
+2022-07-26 17:53:04,935 - dist_train_voc.py - INFO: {'pAcc': 0.8710083571369451, 'mAcc': 0.7363592213962482, 'miou': 0.5780836168896022, 'iou': {0: 0.8518812177093801, 1: 0.6872171286597311, 2: 0.30509468336849377, 3: 0.6243066019440725, 4: 0.4418927205771398, 5: 0.48180613849372905, 6: 0.6121163490211723, 7: 0.5944119576071393, 8: 0.7737193043947794, 9: 0.22977403006833166, 10: 0.7296423044350571, 11: 0.39913756375697296, 12: 0.6914043292105964, 13: 0.7169346308474683, 14: 0.6349440023968878, 15: 0.6373671645043999, 16: 0.4899655851363487, 17: 0.7382755456287197, 18: 0.4373389418041973, 19: 0.65268060966053, 20: 0.40984514545650025}}
+2022-07-26 17:53:04,935 - dist_train_voc.py - INFO: aff cams score:
+2022-07-26 17:53:04,935 - dist_train_voc.py - INFO: {'pAcc': 0.8822060916074398, 'mAcc': 0.750385426340285, 'miou': 0.5981628709557272, 'iou': {0: 0.8648071260314298, 1: 0.7176929245650434, 2: 0.3008942956586371, 3: 0.6663929113327343, 4: 0.5169876587673597, 5: 0.41198891261953924, 6: 0.7189028166239573, 7: 0.6465603725101182, 8: 0.7712152813626274, 9: 0.2157064443098101, 10: 0.8013871929714378, 11: 0.40760297939755424, 12: 0.7185261640192259, 13: 0.7632173214083178, 14: 0.6677556381111662, 15: 0.6762103858976743, 16: 0.4325494299245914, 17: 0.7764312503219323, 18: 0.4860031177348044, 19: 0.6846987876703927, 20: 0.31588927883191537}}
+2022-07-26 17:53:04,935 - dist_train_voc.py - INFO: segs score:
+2022-07-26 17:53:04,935 - dist_train_voc.py - INFO: {'pAcc': 0.8471050857580323, 'mAcc': 0.7425765666111569, 'miou': 0.5396425900974947, 'iou': {0: 0.8378972622968223, 1: 0.6940300149589035, 2: 0.26191648890254177, 3: 0.702673372309639, 4: 0.4127130172966419, 5: 0.5123081018563506, 6: 0.608769535982357, 7: 0.5697622559881178, 8: 0.7442870523291079, 9: 0.12355575370770669, 10: 0.6218915508627152, 11: 0.39147714200384287, 12: 0.6996933763478362, 13: 0.6105648769469342, 14: 0.6402790051976804, 15: 0.6474727520999655, 16: 0.40928859512116395, 17: 0.6574456550575458, 18: 0.3099874517033968, 19: 0.5192547446917736, 20: 0.35722638638634857}}
+2022-07-26 17:56:01,719 - dist_train_voc.py - INFO: Iter: 4200; Elasped: 1:13:52; ETA: 4:37:52; LR: 4.740e-05; cls_loss: 0.0919, aff_loss: 0.1268, pseudo_seg_loss 0.2653, pseudo_seg_mAcc: 0.8306
+2022-07-26 17:59:08,382 - dist_train_voc.py - INFO: Iter: 4400; Elasped: 1:16:59; ETA: 4:32:56; LR: 4.680e-05; cls_loss: 0.0791, aff_loss: 0.1220, pseudo_seg_loss 0.2926, pseudo_seg_mAcc: 0.8122
+2022-07-26 18:02:14,172 - dist_train_voc.py - INFO: Iter: 4600; Elasped: 1:20:05; ETA: 4:28:06; LR: 4.620e-05; cls_loss: 0.0907, aff_loss: 0.1213, pseudo_seg_loss 0.3358, pseudo_seg_mAcc: 0.3304
+2022-07-26 18:05:19,181 - dist_train_voc.py - INFO: Iter: 4800; Elasped: 1:23:10; ETA: 4:23:21; LR: 4.560e-05; cls_loss: 0.0857, aff_loss: 0.1196, pseudo_seg_loss 0.2944, pseudo_seg_mAcc: 0.4496
+2022-07-26 18:08:23,755 - dist_train_voc.py - INFO: Iter: 5000; Elasped: 1:26:14; ETA: 4:18:42; LR: 4.500e-05; cls_loss: 0.0832, aff_loss: 0.1144, pseudo_seg_loss 0.3178, pseudo_seg_mAcc: 0.7962
+2022-07-26 18:11:32,749 - dist_train_voc.py - INFO: Iter: 5200; Elasped: 1:29:23; ETA: 4:14:23; LR: 4.440e-05; cls_loss: 0.0816, aff_loss: 0.1200, pseudo_seg_loss 0.2989, pseudo_seg_mAcc: 0.7083
+2022-07-26 18:14:39,845 - dist_train_voc.py - INFO: Iter: 5400; Elasped: 1:32:30; ETA: 4:10:05; LR: 4.380e-05; cls_loss: 0.0891, aff_loss: 0.1201, pseudo_seg_loss 0.3151, pseudo_seg_mAcc: 0.4065
+2022-07-26 18:17:46,484 - dist_train_voc.py - INFO: Iter: 5600; Elasped: 1:35:37; ETA: 4:05:52; LR: 4.320e-05; cls_loss: 0.0655, aff_loss: 0.1168, pseudo_seg_loss 0.2561, pseudo_seg_mAcc: 0.8781
+2022-07-26 18:20:52,256 - dist_train_voc.py - INFO: Iter: 5800; Elasped: 1:38:43; ETA: 4:01:41; LR: 4.260e-05; cls_loss: 0.0781, aff_loss: 0.1171, pseudo_seg_loss 0.3094, pseudo_seg_mAcc: 0.7060
+2022-07-26 18:24:01,309 - dist_train_voc.py - INFO: Iter: 6000; Elasped: 1:41:52; ETA: 3:57:41; LR: 4.200e-05; cls_loss: 0.0782, aff_loss: 0.1114, pseudo_seg_loss 0.2505, pseudo_seg_mAcc: 0.3337
+2022-07-26 18:24:08,868 - dist_train_voc.py - INFO: Validating...
+2022-07-26 18:28:20,515 - dist_train_voc.py - INFO: val cls score: 0.872390
+2022-07-26 18:28:20,516 - dist_train_voc.py - INFO: cams score:
+2022-07-26 18:28:20,516 - dist_train_voc.py - INFO: {'pAcc': 0.8847260594307844, 'mAcc': 0.7072309786495092, 'miou': 0.592479641336424, 'iou': {0: 0.8675527502462167, 1: 0.6852688546871949, 2: 0.3373465136623856, 3: 0.6337848897897461, 4: 0.5096743846757746, 5: 0.5407397323438031, 6: 0.6412459259291731, 7: 0.5738192631992141, 8: 0.7980317790669885, 9: 0.2417051579759658, 10: 0.7122008907554597, 11: 0.36713935704209666, 12: 0.7306458805151157, 13: 0.7289171200739947, 14: 0.6129071902801618, 15: 0.6826269893893148, 16: 0.47826127710310334, 17: 0.7502679895459448, 18: 0.47856507201350257, 19: 0.659775441852673, 20: 0.411596007917075}}
+2022-07-26 18:28:20,516 - dist_train_voc.py - INFO: aff cams score:
+2022-07-26 18:28:20,516 - dist_train_voc.py - INFO: {'pAcc': 0.894903126630434, 'mAcc': 0.7386008123523512, 'miou': 0.6219500774888223, 'iou': {0: 0.8809026972798621, 1: 0.7276815428941025, 2: 0.3417845958965982, 3: 0.6963445331281232, 4: 0.5621831751499383, 5: 0.5355084219858156, 6: 0.720886274601991, 7: 0.6235925388955678, 8: 0.8040466918563987, 9: 0.25108873292182543, 10: 0.793820631867589, 11: 0.39510456754523426, 12: 0.7468628878317379, 13: 0.7623071340007684, 14: 0.6516593275348126, 15: 0.6918261106058761, 16: 0.4842984491207769, 17: 0.7956671907374021, 18: 0.5107703072349671, 19: 0.7089461956589521, 20: 0.37566962051692654}}
+2022-07-26 18:28:20,516 - dist_train_voc.py - INFO: segs score:
+2022-07-26 18:28:20,516 - dist_train_voc.py - INFO: {'pAcc': 0.8800974525145708, 'mAcc': 0.7108727906494691, 'miou': 0.5796144215730988, 'iou': {0: 0.8725047714594822, 1: 0.7362464340803857, 2: 0.3292024456199445, 3: 0.707483042049971, 4: 0.5520046464230957, 5: 0.5379858058071637, 6: 0.699954983804997, 7: 0.6121465246135465, 8: 0.787082050373891, 9: 0.17433114495698337, 10: 0.6608105914229103, 11: 0.37217167263640905, 12: 0.7048793967025515, 13: 0.6866040806907371, 14: 0.6383978113851008, 15: 0.7014937231014329, 16: 0.4468452089597464, 17: 0.7271936521218608, 18: 0.28345877846692785, 19: 0.6123261567951798, 20: 0.3287799315627606}}
+2022-07-26 18:31:17,838 - dist_train_voc.py - INFO: Iter: 6200; Elasped: 1:49:08; ETA: 4:02:54; LR: 4.140e-05; cls_loss: 0.0761, aff_loss: 0.1048, pseudo_seg_loss 0.3042, pseudo_seg_mAcc: 0.8954
+2022-07-26 18:34:28,136 - dist_train_voc.py - INFO: Iter: 6400; Elasped: 1:52:19; ETA: 3:58:40; LR: 4.080e-05; cls_loss: 0.0688, aff_loss: 0.1078, pseudo_seg_loss 0.2408, pseudo_seg_mAcc: 0.7452
+2022-07-26 18:37:36,005 - dist_train_voc.py - INFO: Iter: 6600; Elasped: 1:55:27; ETA: 3:54:23; LR: 4.020e-05; cls_loss: 0.0687, aff_loss: 0.1053, pseudo_seg_loss 0.2398, pseudo_seg_mAcc: 0.5695
+2022-07-26 18:40:43,329 - dist_train_voc.py - INFO: Iter: 6800; Elasped: 1:58:34; ETA: 3:50:09; LR: 3.960e-05; cls_loss: 0.0653, aff_loss: 0.1047, pseudo_seg_loss 0.2602, pseudo_seg_mAcc: 0.5598
+2022-07-26 18:43:50,487 - dist_train_voc.py - INFO: Iter: 7000; Elasped: 2:01:41; ETA: 3:45:59; LR: 3.900e-05; cls_loss: 0.0742, aff_loss: 0.1021, pseudo_seg_loss 0.2123, pseudo_seg_mAcc: 0.7331
+2022-07-26 18:46:58,972 - dist_train_voc.py - INFO: Iter: 7200; Elasped: 2:04:50; ETA: 3:41:55; LR: 3.840e-05; cls_loss: 0.0666, aff_loss: 0.1075, pseudo_seg_loss 0.2018, pseudo_seg_mAcc: 0.8868
+2022-07-26 18:50:07,248 - dist_train_voc.py - INFO: Iter: 7400; Elasped: 2:07:58; ETA: 3:37:53; LR: 3.780e-05; cls_loss: 0.0729, aff_loss: 0.1111, pseudo_seg_loss 0.2381, pseudo_seg_mAcc: 0.1915
+2022-07-26 18:53:12,114 - dist_train_voc.py - INFO: Iter: 7600; Elasped: 2:11:03; ETA: 3:33:49; LR: 3.720e-05; cls_loss: 0.0739, aff_loss: 0.1077, pseudo_seg_loss 0.1945, pseudo_seg_mAcc: 0.7707
+2022-07-26 18:56:19,245 - dist_train_voc.py - INFO: Iter: 7800; Elasped: 2:14:10; ETA: 3:29:51; LR: 3.660e-05; cls_loss: 0.0706, aff_loss: 0.1034, pseudo_seg_loss 0.2340, pseudo_seg_mAcc: 0.6765
+2022-07-26 18:59:28,444 - dist_train_voc.py - INFO: Iter: 8000; Elasped: 2:17:19; ETA: 3:25:58; LR: 3.600e-05; cls_loss: 0.0705, aff_loss: 0.1022, pseudo_seg_loss 0.2237, pseudo_seg_mAcc: 0.7836
+2022-07-26 18:59:39,049 - dist_train_voc.py - INFO: Validating...
+2022-07-26 19:03:50,806 - dist_train_voc.py - INFO: val cls score: 0.878381
+2022-07-26 19:03:50,807 - dist_train_voc.py - INFO: cams score:
+2022-07-26 19:03:50,807 - dist_train_voc.py - INFO: {'pAcc': 0.891336822539235, 'mAcc': 0.70511380476066, 'miou': 0.6050766106079261, 'iou': {0: 0.8757247139065343, 1: 0.7293068418079385, 2: 0.33941118096715667, 3: 0.678498331612116, 4: 0.5488169304807811, 5: 0.5862226509397448, 6: 0.5740496200327639, 7: 0.6085192574434299, 8: 0.7913618319715774, 9: 0.2736582039453074, 10: 0.6972845452518625, 11: 0.36978320301888284, 12: 0.7729811721913085, 13: 0.7259631034218796, 14: 0.6786266271754956, 15: 0.7069894455259291, 16: 0.4348686725937828, 17: 0.7813128281124677, 18: 0.42864882280820704, 19: 0.6468059718113934, 20: 0.4577748677478901}}
+2022-07-26 19:03:50,807 - dist_train_voc.py - INFO: aff cams score:
+2022-07-26 19:03:50,808 - dist_train_voc.py - INFO: {'pAcc': 0.8987577107904978, 'mAcc': 0.7283942693810448, 'miou': 0.6285215748643285, 'iou': {0: 0.8851895768476438, 1: 0.7177631044261971, 2: 0.328220608029142, 3: 0.7062283872879785, 4: 0.6039691180238332, 5: 0.571192392451646, 6: 0.6562990589649511, 7: 0.6411565244032257, 8: 0.8122401127240166, 9: 0.2815362690723156, 10: 0.7533290521017986, 11: 0.42182370807243547, 12: 0.7849605470873074, 13: 0.7446409740856577, 14: 0.7002006489553123, 15: 0.7036914191562633, 16: 0.49238373760765686, 17: 0.8149343521490395, 18: 0.4669383361336828, 19: 0.7077202029451656, 20: 0.4045349416256294}}
+2022-07-26 19:03:50,808 - dist_train_voc.py - INFO: segs score:
+2022-07-26 19:03:50,808 - dist_train_voc.py - INFO: {'pAcc': 0.8935670157259603, 'mAcc': 0.6961059562819301, 'miou': 0.5950392781293617, 'iou': {0: 0.8852244475547076, 1: 0.7675483704002302, 2: 0.33491091832472714, 3: 0.74573071564954, 4: 0.5239892722814525, 5: 0.6129842635412777, 6: 0.6564308512150605, 7: 0.6368022770348344, 8: 0.8220475363887316, 9: 0.22106321480502258, 10: 0.6570913345893249, 11: 0.30279791657046223, 12: 0.757876402383839, 13: 0.715205289993188, 14: 0.6791215066238259, 15: 0.7021996976528714, 16: 0.42019362625655904, 17: 0.7600861123576036, 18: 0.2766262920346952, 19: 0.6638164777342906, 20: 0.35407831732435274}}
+2022-07-26 19:06:47,937 - dist_train_voc.py - INFO: Iter: 8200; Elasped: 2:24:38; ETA: 3:28:07; LR: 3.540e-05; cls_loss: 0.0638, aff_loss: 0.0975, pseudo_seg_loss 0.1942, pseudo_seg_mAcc: 0.1748
+2022-07-26 19:09:49,622 - dist_train_voc.py - INFO: Iter: 8400; Elasped: 2:27:40; ETA: 3:23:55; LR: 3.480e-05; cls_loss: 0.0623, aff_loss: 0.1044, pseudo_seg_loss 0.2371, pseudo_seg_mAcc: 0.8362
+2022-07-26 19:12:59,600 - dist_train_voc.py - INFO: Iter: 8600; Elasped: 2:30:50; ETA: 3:19:56; LR: 3.420e-05; cls_loss: 0.0632, aff_loss: 0.0994, pseudo_seg_loss 0.2168, pseudo_seg_mAcc: 0.3883
+2022-07-26 19:16:07,631 - dist_train_voc.py - INFO: Iter: 8800; Elasped: 2:33:58; ETA: 3:15:57; LR: 3.360e-05; cls_loss: 0.0705, aff_loss: 0.1001, pseudo_seg_loss 0.2203, pseudo_seg_mAcc: 0.6716
+2022-07-26 19:19:14,680 - dist_train_voc.py - INFO: Iter: 9000; Elasped: 2:37:05; ETA: 3:11:59; LR: 3.300e-05; cls_loss: 0.0668, aff_loss: 0.0950, pseudo_seg_loss 0.2252, pseudo_seg_mAcc: 0.7640
+2022-07-26 19:22:22,570 - dist_train_voc.py - INFO: Iter: 9200; Elasped: 2:40:13; ETA: 3:08:04; LR: 3.240e-05; cls_loss: 0.0672, aff_loss: 0.0986, pseudo_seg_loss 0.2287, pseudo_seg_mAcc: 0.4518
+2022-07-26 19:25:27,492 - dist_train_voc.py - INFO: Iter: 9400; Elasped: 2:43:18; ETA: 3:04:08; LR: 3.180e-05; cls_loss: 0.0696, aff_loss: 0.0979, pseudo_seg_loss 0.2201, pseudo_seg_mAcc: 0.7684
+2022-07-26 19:28:34,692 - dist_train_voc.py - INFO: Iter: 9600; Elasped: 2:46:25; ETA: 3:00:17; LR: 3.120e-05; cls_loss: 0.0568, aff_loss: 0.0992, pseudo_seg_loss 0.1878, pseudo_seg_mAcc: 0.8344
+2022-07-26 19:31:38,628 - dist_train_voc.py - INFO: Iter: 9800; Elasped: 2:49:29; ETA: 2:56:24; LR: 3.060e-05; cls_loss: 0.0555, aff_loss: 0.0913, pseudo_seg_loss 0.1893, pseudo_seg_mAcc: 0.9707
+2022-07-26 19:34:45,044 - dist_train_voc.py - INFO: Iter: 10000; Elasped: 2:52:36; ETA: 2:52:36; LR: 3.000e-05; cls_loss: 0.0554, aff_loss: 0.0956, pseudo_seg_loss 0.1739, pseudo_seg_mAcc: 0.4702
+2022-07-26 19:34:51,854 - dist_train_voc.py - INFO: Validating...
+2022-07-26 19:39:02,916 - dist_train_voc.py - INFO: val cls score: 0.892828
+2022-07-26 19:39:02,917 - dist_train_voc.py - INFO: cams score:
+2022-07-26 19:39:02,917 - dist_train_voc.py - INFO: {'pAcc': 0.8977014066540941, 'mAcc': 0.755659761067039, 'miou': 0.6316719929883233, 'iou': {0: 0.8810494539328665, 1: 0.7403631673012944, 2: 0.3397986082636278, 3: 0.7007305345033193, 4: 0.5839775631762633, 5: 0.5729542310680033, 6: 0.6603217323692755, 7: 0.6113540601158022, 8: 0.8006189903801314, 9: 0.2808226301209067, 10: 0.7359787151873375, 11: 0.3913416739093163, 12: 0.7683248891548523, 13: 0.7748540710068008, 14: 0.6963113283987167, 15: 0.7136091322631148, 16: 0.4984314284265259, 17: 0.7943349216788289, 18: 0.5251407135108377, 19: 0.7216447236724212, 20: 0.4731492843145481}}
+2022-07-26 19:39:02,917 - dist_train_voc.py - INFO: aff cams score:
+2022-07-26 19:39:02,917 - dist_train_voc.py - INFO: {'pAcc': 0.8994747643806789, 'mAcc': 0.7777318177965646, 'miou': 0.644192574055675, 'iou': {0: 0.8835820541980101, 1: 0.7366129186804943, 2: 0.32047830517430087, 3: 0.7274910133103967, 4: 0.6420638281129976, 5: 0.562424017760499, 6: 0.7331365619671246, 7: 0.6414480950995195, 8: 0.7914973943513713, 9: 0.3003916102501839, 10: 0.8028258174474849, 11: 0.4309065120523425, 12: 0.7831077919310515, 13: 0.7775954768545396, 14: 0.6999754477503181, 15: 0.6988818741644908, 16: 0.509606125911321, 17: 0.8201971017027865, 18: 0.5579130897846949, 19: 0.695823742123171, 20: 0.41208527654207716}}
+2022-07-26 19:39:02,918 - dist_train_voc.py - INFO: segs score:
+2022-07-26 19:39:02,918 - dist_train_voc.py - INFO: {'pAcc': 0.8943370570516163, 'mAcc': 0.745662474707075, 'miou': 0.6165604991156017, 'iou': {0: 0.8850683986896944, 1: 0.7940327962986721, 2: 0.32160537149587515, 3: 0.7403400259611927, 4: 0.624929210155683, 5: 0.5364047024494262, 6: 0.7324079339764578, 7: 0.6432454175415807, 8: 0.777654070263082, 9: 0.2088139531957455, 10: 0.7407308149096848, 11: 0.3211489582063127, 12: 0.764060945880495, 13: 0.7485605221560789, 14: 0.7039388224221993, 15: 0.6884635735776529, 16: 0.4493552224656091, 17: 0.7920144362418484, 18: 0.3864159919659379, 19: 0.6807639847309683, 20: 0.4078153288434384}}
+2022-07-26 19:41:58,183 - dist_train_voc.py - INFO: Iter: 10200; Elasped: 2:59:49; ETA: 2:52:45; LR: 2.940e-05; cls_loss: 0.0608, aff_loss: 0.0913, pseudo_seg_loss 0.1937, pseudo_seg_mAcc: 0.6195
+2022-07-26 19:45:02,775 - dist_train_voc.py - INFO: Iter: 10400; Elasped: 3:02:53; ETA: 2:48:48; LR: 2.880e-05; cls_loss: 0.0624, aff_loss: 0.0965, pseudo_seg_loss 0.2045, pseudo_seg_mAcc: 0.5874
+2022-07-26 19:48:09,109 - dist_train_voc.py - INFO: Iter: 10600; Elasped: 3:06:00; ETA: 2:44:56; LR: 2.820e-05; cls_loss: 0.0539, aff_loss: 0.0958, pseudo_seg_loss 0.1936, pseudo_seg_mAcc: 0.6597
+2022-07-26 19:51:15,502 - dist_train_voc.py - INFO: Iter: 10800; Elasped: 3:09:06; ETA: 2:41:05; LR: 2.760e-05; cls_loss: 0.0604, aff_loss: 0.0881, pseudo_seg_loss 0.1765, pseudo_seg_mAcc: 0.6235
+2022-07-26 19:54:23,075 - dist_train_voc.py - INFO: Iter: 11000; Elasped: 3:12:14; ETA: 2:37:16; LR: 2.700e-05; cls_loss: 0.0585, aff_loss: 0.0920, pseudo_seg_loss 0.1985, pseudo_seg_mAcc: 0.4638
+2022-07-26 19:57:28,238 - dist_train_voc.py - INFO: Iter: 11200; Elasped: 3:15:19; ETA: 2:33:27; LR: 2.640e-05; cls_loss: 0.0544, aff_loss: 0.0938, pseudo_seg_loss 0.1926, pseudo_seg_mAcc: 0.5591
+2022-07-26 20:00:32,497 - dist_train_voc.py - INFO: Iter: 11400; Elasped: 3:18:23; ETA: 2:29:39; LR: 2.580e-05; cls_loss: 0.0580, aff_loss: 0.0939, pseudo_seg_loss 0.1867, pseudo_seg_mAcc: 0.7139
+2022-07-26 20:03:39,176 - dist_train_voc.py - INFO: Iter: 11600; Elasped: 3:21:30; ETA: 2:25:54; LR: 2.520e-05; cls_loss: 0.0594, aff_loss: 0.0892, pseudo_seg_loss 0.2011, pseudo_seg_mAcc: 0.8180
+2022-07-26 20:06:46,203 - dist_train_voc.py - INFO: Iter: 11800; Elasped: 3:24:37; ETA: 2:22:11; LR: 2.460e-05; cls_loss: 0.0561, aff_loss: 0.0897, pseudo_seg_loss 0.1644, pseudo_seg_mAcc: 0.5046
+2022-07-26 20:09:52,232 - dist_train_voc.py - INFO: Iter: 12000; Elasped: 3:27:43; ETA: 2:18:28; LR: 2.400e-05; cls_loss: 0.0495, aff_loss: 0.0918, pseudo_seg_loss 0.1729, pseudo_seg_mAcc: 0.6781
+2022-07-26 20:10:01,408 - dist_train_voc.py - INFO: Validating...
+2022-07-26 20:14:12,288 - dist_train_voc.py - INFO: val cls score: 0.894698
+2022-07-26 20:14:12,289 - dist_train_voc.py - INFO: cams score:
+2022-07-26 20:14:12,289 - dist_train_voc.py - INFO: {'pAcc': 0.8948184916269312, 'mAcc': 0.7788165175682581, 'miou': 0.6348993809686073, 'iou': {0: 0.8769222471377349, 1: 0.7100412612340727, 2: 0.329497147720443, 3: 0.6883160607538359, 4: 0.5986334969508545, 5: 0.5994680284507142, 6: 0.7476455038404539, 7: 0.6274650354988376, 8: 0.8153347475824325, 9: 0.2863944782294409, 10: 0.7930054903561065, 11: 0.43419013830423336, 12: 0.7785263952345325, 13: 0.7402168449284425, 14: 0.6941061237052413, 15: 0.6998629666188101, 16: 0.5041977940466061, 17: 0.7762374167906436, 18: 0.5099660250843394, 19: 0.6617054637316498, 20: 0.4611543341413281}}
+2022-07-26 20:14:12,289 - dist_train_voc.py - INFO: aff cams score:
+2022-07-26 20:14:12,289 - dist_train_voc.py - INFO: {'pAcc': 0.898099774296993, 'mAcc': 0.7973770941814232, 'miou': 0.6479309493934337, 'iou': {0: 0.8816462462671018, 1: 0.7190118822402816, 2: 0.31252677300310505, 3: 0.7114022995519238, 4: 0.6463223953557897, 5: 0.5974719702614967, 6: 0.7917154078684845, 7: 0.6451222626509946, 8: 0.8072129356743779, 9: 0.29077352645819543, 10: 0.8154516250472184, 11: 0.49797804066997114, 12: 0.78158783007539, 13: 0.7579582506281926, 14: 0.6944863415975208, 15: 0.704593898267995, 16: 0.5229502995487986, 17: 0.8129535622017208, 18: 0.5611355398851374, 19: 0.6326920825243721, 20: 0.4215567674840421}}
+2022-07-26 20:14:12,289 - dist_train_voc.py - INFO: segs score:
+2022-07-26 20:14:12,289 - dist_train_voc.py - INFO: {'pAcc': 0.8887165390015194, 'mAcc': 0.7704180831691422, 'miou': 0.6167480602941964, 'iou': {0: 0.8801098153043155, 1: 0.7672340196602409, 2: 0.3284585512197151, 3: 0.7319408160148287, 4: 0.6283323706659519, 5: 0.6085831670287346, 6: 0.7821567150971559, 7: 0.690132050886769, 8: 0.7948399503165523, 9: 0.1929511627045288, 10: 0.7199764787652962, 11: 0.382374387280288, 12: 0.7662247252490891, 13: 0.719928026818777, 14: 0.6939473768077684, 15: 0.694999898331418, 16: 0.4805050327139357, 17: 0.7227169455322332, 18: 0.33175777184663113, 19: 0.619422371298321, 20: 0.4151176326355722}}
+2022-07-26 20:17:08,221 - dist_train_voc.py - INFO: Iter: 12200; Elasped: 3:34:59; ETA: 2:17:26; LR: 2.340e-05; cls_loss: 0.0514, aff_loss: 0.0918, pseudo_seg_loss 0.1800, pseudo_seg_mAcc: 0.7689
+2022-07-26 20:20:13,907 - dist_train_voc.py - INFO: Iter: 12400; Elasped: 3:38:04; ETA: 2:13:39; LR: 2.280e-05; cls_loss: 0.0592, aff_loss: 0.0906, pseudo_seg_loss 0.1884, pseudo_seg_mAcc: 0.2441
+2022-07-26 20:23:15,668 - dist_train_voc.py - INFO: Iter: 12600; Elasped: 3:41:06; ETA: 2:09:51; LR: 2.220e-05; cls_loss: 0.0512, aff_loss: 0.0929, pseudo_seg_loss 0.1713, pseudo_seg_mAcc: 0.5585
+2022-07-26 20:26:19,554 - dist_train_voc.py - INFO: Iter: 12800; Elasped: 3:44:10; ETA: 2:06:05; LR: 2.160e-05; cls_loss: 0.0467, aff_loss: 0.0931, pseudo_seg_loss 0.1792, pseudo_seg_mAcc: 0.7699
+2022-07-26 20:29:26,811 - dist_train_voc.py - INFO: Iter: 13000; Elasped: 3:47:17; ETA: 2:02:23; LR: 2.100e-05; cls_loss: 0.0619, aff_loss: 0.0934, pseudo_seg_loss 0.1947, pseudo_seg_mAcc: 0.5485
+2022-07-26 20:32:32,239 - dist_train_voc.py - INFO: Iter: 13200; Elasped: 3:50:23; ETA: 1:58:40; LR: 2.040e-05; cls_loss: 0.0583, aff_loss: 0.0935, pseudo_seg_loss 0.1802, pseudo_seg_mAcc: 0.4918
+2022-07-26 20:35:35,285 - dist_train_voc.py - INFO: Iter: 13400; Elasped: 3:53:26; ETA: 1:54:58; LR: 1.980e-05; cls_loss: 0.0521, aff_loss: 0.0929, pseudo_seg_loss 0.1847, pseudo_seg_mAcc: 0.4628
+2022-07-26 20:38:40,606 - dist_train_voc.py - INFO: Iter: 13600; Elasped: 3:56:31; ETA: 1:51:18; LR: 1.920e-05; cls_loss: 0.0520, aff_loss: 0.0839, pseudo_seg_loss 0.1629, pseudo_seg_mAcc: 0.1646
+2022-07-26 20:41:46,182 - dist_train_voc.py - INFO: Iter: 13800; Elasped: 3:59:37; ETA: 1:47:39; LR: 1.860e-05; cls_loss: 0.0502, aff_loss: 0.0894, pseudo_seg_loss 0.1976, pseudo_seg_mAcc: 0.8443
+2022-07-26 20:44:56,397 - dist_train_voc.py - INFO: Iter: 14000; Elasped: 4:02:47; ETA: 1:44:03; LR: 1.800e-05; cls_loss: 0.0533, aff_loss: 0.0928, pseudo_seg_loss 0.1755, pseudo_seg_mAcc: 0.5477
+2022-07-26 20:45:06,347 - dist_train_voc.py - INFO: Validating...
+2022-07-26 20:49:17,606 - dist_train_voc.py - INFO: val cls score: 0.891617
+2022-07-26 20:49:17,607 - dist_train_voc.py - INFO: cams score:
+2022-07-26 20:49:17,607 - dist_train_voc.py - INFO: {'pAcc': 0.8974195050410566, 'mAcc': 0.7685544354738018, 'miou': 0.6359828384801999, 'iou': {0: 0.880070627768102, 1: 0.72089655010728, 2: 0.3264364898028264, 3: 0.7063839231826553, 4: 0.5905573741020667, 5: 0.5972510521376956, 6: 0.7340447781751032, 7: 0.5919028736670974, 8: 0.8205324082770827, 9: 0.2999531413010804, 10: 0.8085446592998895, 11: 0.3908156872139078, 12: 0.7924647839551844, 13: 0.7605019724521204, 14: 0.6860334964362191, 15: 0.7106343755835939, 16: 0.5011774333982506, 17: 0.7794402139502707, 18: 0.5142838411755666, 19: 0.6573326276746582, 20: 0.4863812984235446}}
+2022-07-26 20:49:17,608 - dist_train_voc.py - INFO: aff cams score:
+2022-07-26 20:49:17,608 - dist_train_voc.py - INFO: {'pAcc': 0.8999084462911785, 'mAcc': 0.7808976139304207, 'miou': 0.6460957784952831, 'iou': {0: 0.8842300720083645, 1: 0.7232607267434474, 2: 0.3044292249130646, 3: 0.7298889134757346, 4: 0.6257887472578556, 5: 0.5822537412708089, 6: 0.7860978785300266, 7: 0.6099867209408592, 8: 0.8163935986783417, 9: 0.30295022391772675, 10: 0.8286103008416521, 11: 0.4376670432801471, 12: 0.7857671950592924, 13: 0.7752249163850499, 14: 0.6938451566864067, 15: 0.6997991796903335, 16: 0.5046474280685981, 17: 0.8086224079059284, 18: 0.5781897100020877, 19: 0.64796940485951, 20: 0.4423887578857108}}
+2022-07-26 20:49:17,608 - dist_train_voc.py - INFO: segs score:
+2022-07-26 20:49:17,608 - dist_train_voc.py - INFO: {'pAcc': 0.8978442522131761, 'mAcc': 0.7647725928419524, 'miou': 0.6273017309522192, 'iou': {0: 0.887971991808717, 1: 0.7777651033812502, 2: 0.3064145539104797, 3: 0.7558038218783447, 4: 0.6142501918496297, 5: 0.6035386592799664, 6: 0.7492438678257871, 7: 0.654523026019662, 8: 0.8187418722289371, 9: 0.2128432713183217, 10: 0.7613488838936904, 11: 0.3929773865020303, 12: 0.7755335286554058, 13: 0.7598559625585671, 14: 0.7054147235491014, 15: 0.7080340301054882, 16: 0.46604891628554385, 17: 0.7931785065473559, 18: 0.38861439030151673, 19: 0.6017279967433766, 20: 0.4395056653534334}}
+2022-07-26 20:52:12,804 - dist_train_voc.py - INFO: Iter: 14200; Elasped: 4:10:03; ETA: 1:42:07; LR: 1.740e-05; cls_loss: 0.0478, aff_loss: 0.0888, pseudo_seg_loss 0.1759, pseudo_seg_mAcc: 0.5713
+2022-07-26 20:55:16,792 - dist_train_voc.py - INFO: Iter: 14400; Elasped: 4:13:07; ETA: 1:38:26; LR: 1.680e-05; cls_loss: 0.0467, aff_loss: 0.0940, pseudo_seg_loss 0.2092, pseudo_seg_mAcc: 0.4009
+2022-07-26 20:58:23,058 - dist_train_voc.py - INFO: Iter: 14600; Elasped: 4:16:14; ETA: 1:34:46; LR: 1.620e-05; cls_loss: 0.0496, aff_loss: 0.0848, pseudo_seg_loss 0.1584, pseudo_seg_mAcc: 0.7046
+2022-07-26 21:01:27,501 - dist_train_voc.py - INFO: Iter: 14800; Elasped: 4:19:18; ETA: 1:31:06; LR: 1.560e-05; cls_loss: 0.0509, aff_loss: 0.0889, pseudo_seg_loss 0.1712, pseudo_seg_mAcc: 0.3162
+2022-07-26 21:04:27,188 - dist_train_voc.py - INFO: Iter: 15000; Elasped: 4:22:18; ETA: 1:27:26; LR: 1.500e-05; cls_loss: 0.0451, aff_loss: 0.0901, pseudo_seg_loss 0.1682, pseudo_seg_mAcc: 0.3405
+2022-07-26 21:07:28,377 - dist_train_voc.py - INFO: Iter: 15200; Elasped: 4:25:19; ETA: 1:23:47; LR: 1.440e-05; cls_loss: 0.0484, aff_loss: 0.0852, pseudo_seg_loss 0.1365, pseudo_seg_mAcc: 0.5599
+2022-07-26 21:10:33,527 - dist_train_voc.py - INFO: Iter: 15400; Elasped: 4:28:24; ETA: 1:20:10; LR: 1.380e-05; cls_loss: 0.0484, aff_loss: 0.0907, pseudo_seg_loss 0.1877, pseudo_seg_mAcc: 0.5742
+2022-07-26 21:13:38,915 - dist_train_voc.py - INFO: Iter: 15600; Elasped: 4:31:29; ETA: 1:16:34; LR: 1.320e-05; cls_loss: 0.0437, aff_loss: 0.0900, pseudo_seg_loss 0.1780, pseudo_seg_mAcc: 0.6165
+2022-07-26 21:16:46,574 - dist_train_voc.py - INFO: Iter: 15800; Elasped: 4:34:37; ETA: 1:12:59; LR: 1.260e-05; cls_loss: 0.0379, aff_loss: 0.0816, pseudo_seg_loss 0.1339, pseudo_seg_mAcc: 0.6260
+2022-07-26 21:19:53,693 - dist_train_voc.py - INFO: Iter: 16000; Elasped: 4:37:44; ETA: 1:09:26; LR: 1.200e-05; cls_loss: 0.0452, aff_loss: 0.0824, pseudo_seg_loss 0.1621, pseudo_seg_mAcc: 0.8448
+2022-07-26 21:20:05,357 - dist_train_voc.py - INFO: Validating...
+2022-07-26 21:24:15,880 - dist_train_voc.py - INFO: val cls score: 0.903266
+2022-07-26 21:24:15,881 - dist_train_voc.py - INFO: cams score:
+2022-07-26 21:24:15,881 - dist_train_voc.py - INFO: {'pAcc': 0.8976000169743695, 'mAcc': 0.7723718537249488, 'miou': 0.6366288166483862, 'iou': {0: 0.8805997786896819, 1: 0.7347914032541447, 2: 0.3164017486254281, 3: 0.7271429523037909, 4: 0.5855421850601301, 5: 0.5896580129451833, 6: 0.71770729659735, 7: 0.6113880744011736, 8: 0.802730571921884, 9: 0.3009024941192456, 10: 0.801511919227611, 11: 0.4177839554346705, 12: 0.7843845032912231, 13: 0.7672992285625236, 14: 0.6835700321244327, 15: 0.71007244598646, 16: 0.5034818263694752, 17: 0.7871888406374116, 18: 0.5103236043220405, 19: 0.6817649440584654, 20: 0.454959331683785}}
+2022-07-26 21:24:15,881 - dist_train_voc.py - INFO: aff cams score:
+2022-07-26 21:24:15,881 - dist_train_voc.py - INFO: {'pAcc': 0.8989596489451454, 'mAcc': 0.7863926398619832, 'miou': 0.6446685991142376, 'iou': {0: 0.8832353064054951, 1: 0.7406016522119933, 2: 0.30221851151284923, 3: 0.7260312723075287, 4: 0.6198121436936413, 5: 0.5861655007886905, 6: 0.7695777533282132, 7: 0.6299038636062053, 8: 0.7916682092084953, 9: 0.30335240553301096, 10: 0.8247695612824659, 11: 0.4602771122523358, 12: 0.7610778070087165, 13: 0.7735048821950767, 14: 0.6850232298346282, 15: 0.7024586667641153, 16: 0.5203358263050778, 17: 0.8256796640604225, 18: 0.5701127901898324, 19: 0.6534169101218362, 20: 0.4088175127883604}}
+2022-07-26 21:24:15,881 - dist_train_voc.py - INFO: segs score:
+2022-07-26 21:24:15,881 - dist_train_voc.py - INFO: {'pAcc': 0.8959450281972462, 'mAcc': 0.7638480028572658, 'miou': 0.6218850204232025, 'iou': {0: 0.8861844461150447, 1: 0.7645111214418383, 2: 0.3120017072323539, 3: 0.7410057681420156, 4: 0.6035905973928866, 5: 0.5920087813416268, 6: 0.7840256963782815, 7: 0.6436547060557719, 8: 0.8016812431162325, 9: 0.20544639768918618, 10: 0.7516737446988498, 11: 0.398065096708384, 12: 0.7686902794668263, 13: 0.7570715332939154, 14: 0.6794335715717053, 15: 0.7001941134441861, 16: 0.48300801830900314, 17: 0.7528150432775019, 18: 0.3637611990147372, 19: 0.66956928184988, 20: 0.401193082347024}}
+2022-07-26 21:27:14,034 - dist_train_voc.py - INFO: Iter: 16200; Elasped: 4:45:05; ETA: 1:06:52; LR: 1.140e-05; cls_loss: 0.0435, aff_loss: 0.0874, pseudo_seg_loss 0.1768, pseudo_seg_mAcc: 0.7854
+2022-07-26 21:30:22,776 - dist_train_voc.py - INFO: Iter: 16400; Elasped: 4:48:13; ETA: 1:03:16; LR: 1.080e-05; cls_loss: 0.0396, aff_loss: 0.0754, pseudo_seg_loss 0.1318, pseudo_seg_mAcc: 0.2944
+2022-07-26 21:33:28,158 - dist_train_voc.py - INFO: Iter: 16600; Elasped: 4:51:19; ETA: 0:59:40; LR: 1.020e-05; cls_loss: 0.0449, aff_loss: 0.0851, pseudo_seg_loss 0.1654, pseudo_seg_mAcc: 0.5533
+2022-07-26 21:36:29,916 - dist_train_voc.py - INFO: Iter: 16800; Elasped: 4:54:20; ETA: 0:56:03; LR: 9.603e-06; cls_loss: 0.0412, aff_loss: 0.0774, pseudo_seg_loss 0.1420, pseudo_seg_mAcc: 0.7243
+2022-07-26 21:39:40,748 - dist_train_voc.py - INFO: Iter: 17000; Elasped: 4:57:31; ETA: 0:52:30; LR: 9.003e-06; cls_loss: 0.0338, aff_loss: 0.0836, pseudo_seg_loss 0.1407, pseudo_seg_mAcc: 0.8887
+2022-07-26 21:42:47,021 - dist_train_voc.py - INFO: Iter: 17200; Elasped: 5:00:38; ETA: 0:48:56; LR: 8.403e-06; cls_loss: 0.0411, aff_loss: 0.0863, pseudo_seg_loss 0.1512, pseudo_seg_mAcc: 0.8777
+2022-07-26 21:45:49,264 - dist_train_voc.py - INFO: Iter: 17400; Elasped: 5:03:40; ETA: 0:45:22; LR: 7.803e-06; cls_loss: 0.0459, aff_loss: 0.0859, pseudo_seg_loss 0.1483, pseudo_seg_mAcc: 0.4396
+2022-07-26 21:48:46,803 - dist_train_voc.py - INFO: Iter: 17600; Elasped: 5:06:37; ETA: 0:41:48; LR: 7.203e-06; cls_loss: 0.0384, aff_loss: 0.0892, pseudo_seg_loss 0.1495, pseudo_seg_mAcc: 0.7560
+2022-07-26 21:51:45,957 - dist_train_voc.py - INFO: Iter: 17800; Elasped: 5:09:36; ETA: 0:38:15; LR: 6.603e-06; cls_loss: 0.0445, aff_loss: 0.0926, pseudo_seg_loss 0.1606, pseudo_seg_mAcc: 0.6781
+2022-07-26 21:54:45,288 - dist_train_voc.py - INFO: Iter: 18000; Elasped: 5:12:36; ETA: 0:34:44; LR: 6.003e-06; cls_loss: 0.0392, aff_loss: 0.0866, pseudo_seg_loss 0.1526, pseudo_seg_mAcc: 0.4969
+2022-07-26 21:54:53,991 - dist_train_voc.py - INFO: Validating...
+2022-07-26 21:59:07,206 - dist_train_voc.py - INFO: val cls score: 0.910674
+2022-07-26 21:59:07,207 - dist_train_voc.py - INFO: cams score:
+2022-07-26 21:59:07,208 - dist_train_voc.py - INFO: {'pAcc': 0.8986139056045789, 'mAcc': 0.7612041293339604, 'miou': 0.6360472169916335, 'iou': {0: 0.8813716027066908, 1: 0.7322517568827855, 2: 0.3283652266662425, 3: 0.7218385008045702, 4: 0.5904175609803797, 5: 0.5946145092701253, 6: 0.7243194137445941, 7: 0.5936129131449633, 8: 0.811865281739149, 9: 0.30787080944861717, 10: 0.7947905987332757, 11: 0.395208747267357, 12: 0.7906573963030908, 13: 0.7562378154307096, 14: 0.686397898667326, 15: 0.7066120661479951, 16: 0.49784409628455595, 17: 0.7864405172008959, 18: 0.49362875680041235, 19: 0.6885225131295998, 20: 0.47412357547096673}}
+2022-07-26 21:59:07,208 - dist_train_voc.py - INFO: aff cams score:
+2022-07-26 21:59:07,208 - dist_train_voc.py - INFO: {'pAcc': 0.9014581578790077, 'mAcc': 0.7799569360555955, 'miou': 0.6470585612536334, 'iou': {0: 0.8860173587786856, 1: 0.7331221481594234, 2: 0.3099426884500012, 3: 0.7352509605198052, 4: 0.6335274579756257, 5: 0.5724922123350938, 6: 0.7785723911116392, 7: 0.6140247702675882, 8: 0.8053207736234018, 9: 0.31433198824395364, 10: 0.8251533339882581, 11: 0.4529684361342432, 12: 0.7828512871368379, 13: 0.7725659389788218, 14: 0.6850684377864549, 15: 0.7079399885369992, 16: 0.5009518954269191, 17: 0.8152850637337904, 18: 0.5605510688836105, 19: 0.6624069031743641, 20: 0.43988468308078255}}
+2022-07-26 21:59:07,208 - dist_train_voc.py - INFO: segs score:
+2022-07-26 21:59:07,208 - dist_train_voc.py - INFO: {'pAcc': 0.9014779670270341, 'mAcc': 0.7464872804276323, 'miou': 0.6296057711877322, 'iou': {0: 0.891216158016897, 1: 0.7794934131610273, 2: 0.32027486564039476, 3: 0.7729122656833312, 4: 0.6236757874139793, 5: 0.5746736439564011, 6: 0.7830323629262664, 7: 0.6188059722789985, 8: 0.8054373276265346, 9: 0.232651588288091, 10: 0.7639668414617511, 11: 0.35093583631554176, 12: 0.7829881892958734, 13: 0.7528025981124782, 14: 0.6903181794686155, 15: 0.7083326601374125, 16: 0.4730790942652832, 17: 0.8130483588945866, 18: 0.39221706889506047, 19: 0.6689176106811456, 20: 0.42294137242270546}}
+2022-07-26 22:01:55,805 - dist_train_voc.py - INFO: Iter: 18200; Elasped: 5:19:46; ETA: 0:31:37; LR: 5.403e-06; cls_loss: 0.0504, aff_loss: 0.0793, pseudo_seg_loss 0.1641, pseudo_seg_mAcc: 0.8154
+2022-07-26 22:04:55,411 - dist_train_voc.py - INFO: Iter: 18400; Elasped: 5:22:46; ETA: 0:28:04; LR: 4.803e-06; cls_loss: 0.0426, aff_loss: 0.0792, pseudo_seg_loss 0.1338, pseudo_seg_mAcc: 0.5538
+2022-07-26 22:07:57,381 - dist_train_voc.py - INFO: Iter: 18600; Elasped: 5:25:48; ETA: 0:24:31; LR: 4.203e-06; cls_loss: 0.0400, aff_loss: 0.0853, pseudo_seg_loss 0.1682, pseudo_seg_mAcc: 0.7528
+2022-07-26 22:10:58,986 - dist_train_voc.py - INFO: Iter: 18800; Elasped: 5:28:50; ETA: 0:20:59; LR: 3.603e-06; cls_loss: 0.0424, aff_loss: 0.0869, pseudo_seg_loss 0.1463, pseudo_seg_mAcc: 0.6607
+2022-07-26 22:13:59,473 - dist_train_voc.py - INFO: Iter: 19000; Elasped: 5:31:50; ETA: 0:17:27; LR: 3.003e-06; cls_loss: 0.0469, aff_loss: 0.0837, pseudo_seg_loss 0.1559, pseudo_seg_mAcc: 0.7524
+2022-07-26 22:17:00,477 - dist_train_voc.py - INFO: Iter: 19200; Elasped: 5:34:51; ETA: 0:13:57; LR: 2.403e-06; cls_loss: 0.0427, aff_loss: 0.0889, pseudo_seg_loss 0.1545, pseudo_seg_mAcc: 0.2212
+2022-07-26 22:19:55,898 - dist_train_voc.py - INFO: Iter: 19400; Elasped: 5:37:46; ETA: 0:10:26; LR: 1.803e-06; cls_loss: 0.0405, aff_loss: 0.0849, pseudo_seg_loss 0.1541, pseudo_seg_mAcc: 0.9398
+2022-07-26 22:22:55,266 - dist_train_voc.py - INFO: Iter: 19600; Elasped: 5:40:46; ETA: 0:06:57; LR: 1.203e-06; cls_loss: 0.0392, aff_loss: 0.0862, pseudo_seg_loss 0.1547, pseudo_seg_mAcc: 0.8313
+2022-07-26 22:25:56,681 - dist_train_voc.py - INFO: Iter: 19800; Elasped: 5:43:47; ETA: 0:03:28; LR: 6.030e-07; cls_loss: 0.0396, aff_loss: 0.0854, pseudo_seg_loss 0.1655, pseudo_seg_mAcc: 0.5822
+2022-07-26 22:28:54,956 - dist_train_voc.py - INFO: Iter: 20000; Elasped: 5:46:45; ETA: 0:00:00; LR: 3.000e-09; cls_loss: 0.0397, aff_loss: 0.0827, pseudo_seg_loss 0.1399, pseudo_seg_mAcc: 0.5953
+2022-07-26 22:29:03,319 - dist_train_voc.py - INFO: Validating...
+2022-07-26 22:33:17,833 - dist_train_voc.py - INFO: val cls score: 0.908521
+2022-07-26 22:33:17,834 - dist_train_voc.py - INFO: cams score:
+2022-07-26 22:33:17,835 - dist_train_voc.py - INFO: {'pAcc': 0.8985339870648917, 'mAcc': 0.7685691861676054, 'miou': 0.637599511259504, 'iou': {0: 0.8813070342353236, 1: 0.7350733837283925, 2: 0.3215255656028578, 3: 0.7073734593807092, 4: 0.5902195738145142, 5: 0.604745849957237, 6: 0.7200065777744992, 7: 0.6116783780464216, 8: 0.8099188685644783, 9: 0.30268955420723276, 10: 0.795624054987462, 11: 0.4130365862773432, 12: 0.7927213507856871, 13: 0.7525978011253021, 14: 0.6797609851110891, 15: 0.7071246946993888, 16: 0.5076808243368712, 17: 0.7876841634426056, 18: 0.4926782098748598, 19: 0.6971560164745211, 20: 0.47898680402278593}}
+2022-07-26 22:33:17,835 - dist_train_voc.py - INFO: aff cams score:
+2022-07-26 22:33:17,835 - dist_train_voc.py - INFO: {'pAcc': 0.9016077249094671, 'mAcc': 0.7852905406556383, 'miou': 0.6485360199043996, 'iou': {0: 0.8860372645928394, 1: 0.7333653988326163, 2: 0.3071513396063341, 3: 0.7206641343726644, 4: 0.6357773080030937, 5: 0.5807113328764059, 6: 0.779306254164322, 7: 0.6291417804860119, 8: 0.8018270399395877, 9: 0.3056739873227192, 10: 0.825050807395437, 11: 0.46692367417036024, 12: 0.7811954619948974, 13: 0.7728654999453132, 14: 0.6849113945076215, 15: 0.7100283137471759, 16: 0.5111912638505816, 17: 0.8170924462933589, 18: 0.5644998455683957, 19: 0.669414746697546, 20: 0.43642712362510916}}
+2022-07-26 22:33:17,835 - dist_train_voc.py - INFO: segs score:
+2022-07-26 22:33:17,835 - dist_train_voc.py - INFO: {'pAcc': 0.8953827277059626, 'mAcc': 0.7901597455051226, 'miou': 0.6308276449783252, 'iou': {0: 0.8836386147120315, 1: 0.7696953658944942, 2: 0.3080647602405764, 3: 0.7446477447554533, 4: 0.6437214050742995, 5: 0.5881221065434409, 6: 0.8001992820072661, 7: 0.6605743815707009, 8: 0.7942930699996121, 9: 0.22328788055372104, 10: 0.775369427646969, 11: 0.4349484569258659, 12: 0.7633686244343937, 13: 0.7495632591466392, 14: 0.6952122118875219, 15: 0.7094594768941455, 16: 0.45681323652260625, 17: 0.7828606404318109, 18: 0.38620178041543024, 19: 0.6449946513567517, 20: 0.43234416753110083}}

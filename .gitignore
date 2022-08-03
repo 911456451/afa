@@ -1,0 +1,4 @@
+*.pth
+VOC2012
+*.pyc
+events.*

@@ -9,7 +9,7 @@
 #SBATCH -t 3-0:00:00
 #SBATCH -o wetr_attn_coco.out
 
-source activate py36
+source activate afa
 
 port=29519
 crop_size=512
