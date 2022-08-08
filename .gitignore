@@ -2,3 +2,4 @@
 VOC2012
 *.pyc
 events.*
+core.*
